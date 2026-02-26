@@ -25,24 +25,41 @@ export const api = {
   async generateHip(code: string, astData: any) {
     if (IS_DEMO) return DEMO_RESPONSES.generate;
 
+    // Extract primitive from the parse result
+    const primitive = astData?.data?.classification?.primitive || "elementwise";
+
     const res = await fetch(`${API_BASE}/generate`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ cuda_code: code, parse_result: astData })
+      body: JSON.stringify({ cuda_code: code, primitive })
     });
     if (!res.ok) throw new Error("Generate failed");
-    return res.json();
+
+    const json = await res.json();
+    return {
+      hip_code: json.data?.generation?.rocm_code || json.data?.hip_code || "",
+      reasoning_trace: json.reasoning_trace || []
+    };
   },
 
-  async verifyPort(cudaCode: string, hipCode: string) {
+  async verifyPort(code: string, hipCode: string, astData: any) {
     if (IS_DEMO) return DEMO_RESPONSES.verify;
+
+    const primitive = astData?.data?.classification?.primitive || "elementwise";
 
     const res = await fetch(`${API_BASE}/verify`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ cuda_code: cudaCode, hip_code: hipCode })
+      body: JSON.stringify({ cuda_code: code, rocm_code: hipCode, primitive })
     });
     if (!res.ok) throw new Error("Verify failed");
-    return res.json();
+
+    const json = await res.json();
+    // Map the verification data to the metrics structure expected by UI
+    const metrics = json.data?.verification || {};
+    metrics.execution_confidence = json.execution_confidence || json.safety_score;
+    metrics.hardware_backend_used = json.hardware_backend_used || "mi300x_remote_cached";
+
+    return { metrics };
   }
 };

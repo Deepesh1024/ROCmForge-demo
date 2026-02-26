@@ -54,7 +54,7 @@ export function useAutoFlow() {
             await new Promise(r => setTimeout(r, 1200));
             setState("VERIFYING");
 
-            const verifyRes = await api.verifyPort(code, generatedCode);
+            const verifyRes = await api.verifyPort(code, generatedCode, parseRes);
 
             setMetrics(verifyRes.metrics || DEMO_RESPONSES.verify.metrics);
             setState("COMPLETE");
