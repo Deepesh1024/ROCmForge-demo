@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand: #ED1C24;
+  --color-background: #0D0D0D;
+  --color-surface: #1A1A1A;
+  --color-surface-hover: #2A2A2A;
+  --color-text: #FFFFFF;
+  --color-text-muted: #A0A0A0;
+  --color-success: #10B981;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-hover);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3A3A3A;
+}
+
+@keyframes pulse-border {
+  0% { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { border-color: rgba(16, 185, 129, 1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { border-color: rgba(16, 185, 129, 0.4); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.badge-pulse {
+  animation: pulse-border 2s infinite;
+}
