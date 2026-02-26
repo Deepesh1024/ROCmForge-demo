@@ -6,8 +6,11 @@ export function WelcomeBanner() {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(() => setIsVisible(true), 1000);
-        return () => clearTimeout(timer);
+        const hasSeen = localStorage.getItem("hasSeenWelcomeBanner");
+        if (!hasSeen) {
+            const timer = setTimeout(() => setIsVisible(true), 1000);
+            return () => clearTimeout(timer);
+        }
     }, []);
 
     return (
@@ -27,7 +30,10 @@ export function WelcomeBanner() {
                         </p>
                     </div>
                     <button
-                        onClick={() => setIsVisible(false)}
+                        onClick={() => {
+                            setIsVisible(false);
+                            localStorage.setItem("hasSeenWelcomeBanner", "true");
+                        }}
                         className="p-1 hover:bg-[#2A2A2A] rounded-md transition-colors ml-2 -mt-1 -mr-1"
                     >
                         <X size={16} className="text-[#A0A0A0]" />
