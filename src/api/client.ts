@@ -58,7 +58,7 @@ export const api = {
     // Map the verification data to the metrics structure expected by UI
     const metrics = json.data?.verification || {};
     metrics.execution_confidence = json.execution_confidence || json.safety_score;
-    metrics.hardware_backend_used = json.hardware_backend_used || "mi300x_remote_cached";
+    metrics.hardware_backend_used = (json.hardware_backend_used || "").replace("_remote_cached", "") || "mi300x";
 
     return { metrics };
   }
