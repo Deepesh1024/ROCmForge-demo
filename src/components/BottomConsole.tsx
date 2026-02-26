@@ -1,26 +1,35 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Terminal } from "lucide-react";
+import { useFlowStore } from "../store/flowStore";
 
-interface BottomConsoleProps {
-    traces: string[];
-    status: string;
-}
+export function BottomConsole() {
+    const { traces, state, timeline } = useFlowStore();
+    const showTraces = timeline.showTrace || state === "COMPLETE";
 
-export function BottomConsole({ traces, status }: BottomConsoleProps) {
     return (
-        <div className="fixed bottom-0 left-0 right-0 h-[30vh] bg-[#121212] border-t border-[#2A2A2A] flex flex-col font-mono z-40">
+        <div className={`fixed bottom-0 left-0 right-0 ${state === 'IDLE' ? 'h-24' : 'h-[30vh]'} bg-[#121212] border-t border-[#2A2A2A] flex flex-col font-mono z-40 transition-all duration-500 ease-in-out`}>
             <div className="flex items-center justify-between px-4 py-2 bg-[#1A1A1A] border-b border-[#2A2A2A]">
                 <div className="flex items-center gap-2 text-xs text-[#A0A0A0]">
                     <Terminal size={14} />
                     <span>REASONING TRACE</span>
                 </div>
                 <div className="text-xs font-medium text-[#10B981]">
-                    {status === "COMPLETE" ? "SAFETY_SCORE: 96 / 100" : ""}
+                    {state === "COMPLETE" ? "SAFETY_SCORE: 96 / 100" : ""}
                 </div>
             </div>
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
                 <AnimatePresence>
-                    {traces.map((trace, i) => {
+                    {!showTraces && traces.length === 0 && (
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            className="text-sm text-[#A0A0A0] flex items-center"
+                        >
+                            AI ready<span className="animate-pulse ml-1 inline-block w-2 h-4 bg-[#ED1C24]" />
+                        </motion.div>
+                    )}
+                    {showTraces && traces.map((trace, i) => {
                         const isError = trace.includes("ERROR") || trace.includes("FAILED");
                         const isSuccess = trace.includes("SUCCESS") || trace.includes("OK");
                         const isDetect = trace.includes("DETECT") || trace.includes("REPLACE");
@@ -40,7 +49,7 @@ export function BottomConsole({ traces, status }: BottomConsoleProps) {
                             </motion.div>
                         );
                     })}
-                    {status === "COMPLETE" && (
+                    {state === "COMPLETE" && (
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}

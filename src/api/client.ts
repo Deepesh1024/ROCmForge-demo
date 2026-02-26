@@ -18,24 +18,33 @@ export const api = {
       headers,
       body: JSON.stringify({ cuda_code: code })
     });
-    if (!res.ok) throw new Error("Parse failed");
-    return res.json();
+    const json = await res.json();
+    if (!res.ok || json.status === "error") throw new Error(json.message || "Parse failed");
+    return json;
   },
 
   async generateHip(code: string, astData: any) {
     if (IS_DEMO) return DEMO_RESPONSES.generate;
 
-    // Extract primitive from the parse result
     const primitive = astData?.data?.classification?.primitive || "elementwise";
+    let meta = astData?.data?.classification?.meta || {};
+
+    // Safety fallback: prevents remote backend from crashing on 0-sized matrix extraction
+    if (meta.dims) {
+      Object.keys(meta.dims).forEach(k => {
+        if (meta.dims[k] <= 0) meta.dims[k] = 128;
+      });
+    }
 
     const res = await fetch(`${API_BASE}/generate`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ cuda_code: code, primitive })
+      body: JSON.stringify({ cuda_code: code, primitive, meta })
     });
-    if (!res.ok) throw new Error("Generate failed");
 
     const json = await res.json();
+    if (!res.ok || json.status === "error") throw new Error(json.message || "Generate failed");
+
     return {
       hip_code: json.data?.generation?.rocm_code || json.data?.hip_code || "",
       reasoning_trace: json.reasoning_trace || []
@@ -46,15 +55,23 @@ export const api = {
     if (IS_DEMO) return DEMO_RESPONSES.verify;
 
     const primitive = astData?.data?.classification?.primitive || "elementwise";
+    let meta = astData?.data?.classification?.meta || {};
+
+    if (meta.dims) {
+      Object.keys(meta.dims).forEach(k => {
+        if (meta.dims[k] <= 0) meta.dims[k] = 128;
+      });
+    }
 
     const res = await fetch(`${API_BASE}/verify`, {
       method: "POST",
       headers,
-      body: JSON.stringify({ cuda_code: code, rocm_code: hipCode, primitive })
+      body: JSON.stringify({ rocm_code: hipCode, meta: { primitive, ...meta } })
     });
-    if (!res.ok) throw new Error("Verify failed");
 
     const json = await res.json();
+    if (!res.ok || json.status === "error") throw new Error(json.message || "Verify failed");
+
     // Map the verification data to the metrics structure expected by UI
     const metrics = json.data?.verification || {};
     metrics.execution_confidence = json.execution_confidence || json.safety_score;

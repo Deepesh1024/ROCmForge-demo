@@ -1,8 +1,14 @@
 import { Server } from "lucide-react";
+import { motion } from "framer-motion";
 
 export function TopBar() {
     return (
-        <div className="fixed top-0 left-0 right-0 h-12 bg-[#0A0A0A] border-b border-[#2A2A2A] flex items-center justify-between px-6 z-50">
+        <motion.div
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="fixed top-0 left-0 right-0 h-12 bg-[#0A0A0A] border-b border-[#2A2A2A] flex items-center justify-between px-6 z-50"
+        >
             <div className="flex items-center gap-3">
                 <img src="/logo.png" alt="AMD Logo" className="h-6 object-contain" />
                 <h1 className="text-white font-semibold flex items-center gap-2">
@@ -18,6 +24,6 @@ export function TopBar() {
                 <span>Connected to MI300X Cache</span>
                 <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse ml-1" />
             </div>
-        </div>
+        </motion.div>
     );
 }

@@ -9,9 +9,10 @@ export function LoadingOverlay({ state }: LoadingOverlayProps) {
 
     let text = "Initializing...";
     let step = "0/3";
-    if (state === "PARSING") { text = "Parsing CUDA constraints..."; step = "1/3"; }
-    else if (state === "GENERATING") { text = "Generating safe ROCm mapping..."; step = "2/3"; }
-    else if (state === "VERIFYING") { text = "Verifying numerical semantics on MI300X..."; step = "3/3"; }
+    let subtext = "";
+    if (state === "PARSING") { text = "Porting… 1/3"; subtext = "Parse"; step = "1/3"; }
+    else if (state === "GENERATING") { text = "Porting… 2/3"; subtext = "Generate"; step = "2/3"; }
+    else if (state === "VERIFYING") { text = "Porting… 3/3"; subtext = "Verify"; step = "3/3"; }
 
     return (
         <AnimatePresence>
@@ -24,12 +25,15 @@ export function LoadingOverlay({ state }: LoadingOverlayProps) {
                 >
                     <div className="flex flex-col items-center gap-6 bg-[#141414] border border-[#2A2A2A] p-8 rounded-xl shadow-2xl min-w-[300px]">
                         <div className="relative">
-                            <img src="/logo.png" alt="Loading..." className="h-10 object-contain drop-shadow-md" />
-                            <div className="absolute inset-0 bg-white/20 blur-md rounded-full animate-pulse mix-blend-overlay"></div>
+                            <motion.div
+                                animate={{ rotate: 360 }}
+                                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+                                className="w-10 h-10 border-4 border-[#2A2A2A] border-t-[#ED1C24] rounded-full"
+                            />
                         </div>
 
                         <div className="flex flex-col items-center gap-2">
-                            <span className="text-white font-medium">{text}</span>
+                            <span className="text-white font-medium">{text} ({subtext})</span>
                             <div className="w-full h-1 bg-[#2A2A2A] rounded-full overflow-hidden mt-2">
                                 <motion.div
                                     className="h-full bg-[#ED1C24]"
@@ -42,7 +46,6 @@ export function LoadingOverlay({ state }: LoadingOverlayProps) {
                                     transition={{ duration: 0.5 }}
                                 />
                             </div>
-                            <span className="text-xs text-[#A0A0A0] font-mono mt-1 pt-2 border-t border-[#2A2A2A] w-full text-center">STEP {step}</span>
                         </div>
                     </div>
                 </motion.div>
