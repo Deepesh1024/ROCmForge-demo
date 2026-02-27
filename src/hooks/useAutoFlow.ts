@@ -22,15 +22,15 @@ export function useAutoFlow() {
         // Helper to check if run is still active
         const isActive = () => useFlowStore.getState().timeline.runToken === currentRun;
 
-        // 0.5s: Card Pulse
+        // 0.0s (rel) [Card selected]
         setTimeout(() => {
             if (isActive()) store.setTimeline({ cardPulseIndex: cardIndex });
-        }, 500);
+        }, 0);
 
-        // 1.0s: Code Slides in (if manual mode, this just ensures visibility)
+        // 0.3s (rel) [1.5s from prompt]: Code Slides in
         setTimeout(() => {
             if (isActive()) store.setTimeline({ showCode: true });
-        }, 1000);
+        }, 300);
 
         // Background APIs
         const startTime = Date.now();
@@ -62,14 +62,33 @@ export function useAutoFlow() {
         if (!isActive()) return;
         const elapsed = Date.now() - startTime;
 
-        // 1.5s: Trace Streaming Begins
-        const traceStartDelay = Math.max(0, 1500 - elapsed);
+        // 0.8s (rel) [2.0s from prompt]: HIP Code Typewriter
+        const typewriterDelay = Math.max(0, 800 - elapsed);
+        setTimeout(() => {
+            if (!isActive()) return;
+            store.setTimeline({ typewriterCode: true });
+            const lines = generatedCode.split('\n');
+            store.setHipCode("");
+            // 8-10 lines slowly, then snap fill
+            const slowLines = Math.min(8, lines.length);
+            for (let i = 0; i < slowLines; i++) {
+                setTimeout(() => {
+                    if (isActive()) store.setHipCode(prev => prev + (prev ? '\n' : '') + lines[i]);
+                }, i * 50);
+            }
+            setTimeout(() => {
+                if (isActive()) store.setHipCode(generatedCode);
+            }, slowLines * 50 + 200);
+        }, typewriterDelay);
+
+        // 1.2s (rel) [2.4s from prompt]: Trace Streaming Begins
+        const traceStartDelay = Math.max(0, 1200 - elapsed);
         setTimeout(() => {
             if (!isActive()) return;
             store.setState("GENERATING");
             store.setTimeline({ showTrace: true });
 
-            const traceDelay = 500 / Math.max(reasoning.length, 1);
+            const traceDelay = 300 / Math.max(reasoning.length, 1);
             reasoning.forEach((line, i) => {
                 setTimeout(() => {
                     if (isActive()) store.addTrace(line);
@@ -77,53 +96,36 @@ export function useAutoFlow() {
             });
         }, traceStartDelay);
 
-        // 2.0s: HIP Code Typewriter
-        const typewriterDelay = Math.max(0, 2000 - elapsed);
-        setTimeout(() => {
-            if (!isActive()) return;
-            store.setTimeline({ typewriterCode: true });
-            const lines = generatedCode.split('\n');
-            store.setHipCode("");
-            for (let i = 0; i < Math.min(10, lines.length); i++) {
-                setTimeout(() => {
-                    if (isActive()) store.setHipCode(prev => prev + (prev ? '\n' : '') + lines[i]);
-                }, i * 100);
-            }
-            setTimeout(() => {
-                if (isActive()) store.setHipCode(generatedCode);
-            }, 1000);
-        }, typewriterDelay);
-
-        // 3.0s: Sidebar slides in
-        const sidebarDelay = Math.max(0, 3000 - elapsed);
+        // 1.8s (rel) [3.0s from prompt]: Sidebar slides in spring
+        const sidebarDelay = Math.max(0, 1800 - elapsed);
         setTimeout(() => {
             if (!isActive()) return;
             store.setState("VERIFYING");
             store.setTimeline({ showSidebar: true });
         }, sidebarDelay);
 
-        // 3.2s: VERIFIED Badge
-        const badgeDelay = Math.max(0, 3200 - elapsed);
+        // 2.1s (rel) [3.3s from prompt]: VERIFIED Badge pulses
+        const badgeDelay = Math.max(0, 2100 - elapsed);
         setTimeout(() => {
             if (isActive()) store.setTimeline({ flashBadge: true });
         }, badgeDelay);
 
-        // 3.5s: Metrics Animate
-        const metricsDelay = Math.max(0, 3500 - elapsed);
+        // 2.2s (rel) [3.4s from prompt]: Metrics Animate
+        const metricsDelay = Math.max(0, 2200 - elapsed);
         setTimeout(() => {
             if (!isActive()) return;
             store.setMetrics(verifyRes.metrics || DEMO_RESPONSES.verify.metrics);
             store.setTimeline({ animateMetrics: true });
         }, metricsDelay);
 
-        // 3.8s: Sweep Bar
-        const sweepDelay = Math.max(0, 3800 - elapsed);
+        // 2.8s (rel) [4.0s from prompt]: Sweep Bar
+        const sweepDelay = Math.max(0, 2800 - elapsed);
         setTimeout(() => {
             if (isActive()) store.setTimeline({ sweepBar: true });
         }, sweepDelay);
 
-        // 4.2s: Success Toast (COMPLETED)
-        const toastDelay = Math.max(0, 4200 - elapsed);
+        // 3.1s (rel) [4.3s from prompt]: Success Toast (COMPLETED)
+        const toastDelay = Math.max(0, 3100 - elapsed);
         setTimeout(() => {
             if (!isActive()) return;
             store.setState("COMPLETE");

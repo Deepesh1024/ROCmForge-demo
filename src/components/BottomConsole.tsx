@@ -17,7 +17,11 @@ export function BottomConsole() {
                     {state === "COMPLETE" ? "SAFETY_SCORE: 96 / 100" : ""}
                 </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar relative">
+                {/* Subtle Grid */}
+                <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, #2A2A2A 1px, transparent 0)', backgroundSize: '16px 16px' }} />
+                {/* Faint Noise Texture */}
+                <div className="absolute inset-0 pointer-events-none opacity-5 mix-blend-screen" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
                 <AnimatePresence>
                     {!showTraces && traces.length === 0 && (
                         <motion.div
@@ -35,18 +39,20 @@ export function BottomConsole() {
                         const isDetect = trace.includes("DETECT") || trace.includes("REPLACE");
 
                         return (
-                            <motion.div
-                                key={i}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                className={`text-sm mb-1 ${isError ? 'text-[#ED1C24]' :
-                                    isSuccess ? 'text-[#10B981]' :
-                                        isDetect ? 'text-[#3B82F6]' :
-                                            'text-[#A0A0A0]'
-                                    }`}
-                            >
-                                {trace}
-                            </motion.div>
+                            <div className="flex items-start gap-4 mb-1 text-sm font-mono relative z-10" key={i}>
+                                <span className="text-[#404040] select-none w-6 text-right">{i + 1}</span>
+                                <motion.div
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className={`flex-1 ${isError ? 'text-[#ED1C24] drop-shadow-[0_0_5px_rgba(237,28,36,0.3)]' :
+                                        isSuccess ? 'text-[#10B981] drop-shadow-[0_0_5px_rgba(16,185,129,0.3)]' :
+                                            isDetect ? 'text-[#3B82F6]' :
+                                                'text-[#A0A0A0]'
+                                        }`}
+                                >
+                                    {trace}
+                                </motion.div>
+                            </div>
                         );
                     })}
                     {state === "COMPLETE" && (

@@ -63,7 +63,7 @@ export function Sidebar() {
                                                 : { scale: 1, opacity: 1 }
                                         }
                                         transition={{ duration: 0.6 }}
-                                        className="flex items-center justify-center gap-3 p-4 mb-8 bg-[#10B981]/10 border border-[#10B981] rounded-lg cursor-help relative overflow-hidden"
+                                        className="flex items-center justify-center gap-3 p-4 mb-8 bg-[#10B981]/10 border-2 border-[#10B981]/80 shadow-[0_0_15px_rgba(16,185,129,0.2)] rounded-xl cursor-help relative overflow-hidden"
                                     >
                                         {timeline.flashBadge && (
                                             <motion.div
@@ -75,8 +75,8 @@ export function Sidebar() {
                                         )}
                                         <CheckCircle className="text-[#10B981]" size={28} />
                                         <div className="text-center relative z-10">
-                                            <h3 className="text-[#10B981] font-bold text-xl tracking-wide">VERIFIED</h3>
-                                            <p className="text-[#10B981]/80 text-sm font-mono">
+                                            <h3 className="text-[#10B981] font-black text-2xl tracking-widest drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]">VERIFIED</h3>
+                                            <p className="text-[#10B981]/80 text-sm font-mono font-bold mt-1">
                                                 <CountUp value={metrics?.execution_confidence || 0} startAnimate={timeline.animateMetrics} />/100 CONFIDENCE
                                             </p>
                                         </div>
@@ -246,13 +246,16 @@ function MetricTile({ icon, label, value, delay, highlight = false, tooltip, ani
                     initial={{ opacity: 0, y: 10 }}
                     animate={animate ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                     transition={{ delay }}
-                    className={`p-3 rounded-lg border ${highlight ? 'bg-[#ED1C24]/10 border-[#ED1C24]/30' : 'bg-[#141414] border-[#2A2A2A]'} flex flex-col gap-2 cursor-help`}
+                    className={`relative p-4 rounded-xl border backdrop-blur-md overflow-hidden group transition-all duration-300 ${highlight ? 'bg-[#ED1C24]/10 border-[#ED1C24]/40 shadow-[0_0_20px_rgba(237,28,36,0.15)] hover:bg-[#ED1C24]/20' : 'bg-white/5 border-white/10 hover:bg-white/10'} flex flex-col gap-2 cursor-help`}
                 >
-                    <div className="flex items-center gap-2 text-xs text-[#A0A0A0]">
+                    {/* Sweep shine animation */}
+                    <div className="absolute inset-0 -translate-x-full group-hover:animate-[shine_1.5s_ease-in-out] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12 pointer-events-none" />
+
+                    <div className="flex items-center gap-2 text-xs text-[#A0A0A0] relative z-10">
                         {icon}
-                        <span className="font-mono">{label}</span>
+                        <span className="font-mono font-semibold">{label}</span>
                     </div>
-                    <div className={`text-lg font-semibold ${highlight ? 'text-[#ED1C24]' : 'text-white'}`}>
+                    <div className={`text-xl font-bold relative z-10 ${highlight ? 'text-[#ED1C24] drop-shadow-[0_0_8px_rgba(237,28,36,0.5)]' : 'text-white'}`}>
                         {value}
                     </div>
                 </motion.div>

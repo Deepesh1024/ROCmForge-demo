@@ -78,7 +78,7 @@ export function MonacoEditors({
             >
                 <div className="absolute top-0 left-0 right-0 h-10 border-b border-[#2A2A2A] bg-[#0A0A0A]/80 backdrop-blur-sm flex items-center justify-between px-4 z-10 w-full rounded-tr-lg">
                     <div className="flex items-center gap-2">
-                        <span className="text-[#3B82F6] text-xs">🔷</span>
+                        <span className="text-[#3B82F6] text-xs font-bold">🔷 CUDA</span>
                         <span className="text-xs font-mono text-[#A0A0A0]">src/kernel.cu</span>
                     </div>
 
@@ -143,7 +143,7 @@ export function MonacoEditors({
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: '100%' }}
                             transition={{ duration: 1, ease: "easeInOut" }}
-                            className="absolute top-0 bottom-0 left-1/2 -content-x-1/2 w-[1px] bg-gradient-to-b from-transparent via-[#ED1C24]/50 to-transparent shadow-[0_0_10px_rgba(237,28,36,0.8)]"
+                            className="absolute top-0 bottom-0 left-1/2 -content-x-1/2 w-[2px] bg-gradient-to-b from-transparent via-[#ED1C24]/80 to-transparent shadow-[0_0_20px_rgba(237,28,36,1)]"
                         />
                     )}
                 </AnimatePresence>
@@ -158,8 +158,8 @@ export function MonacoEditors({
             >
                 <div className="absolute top-0 right-0 left-0 h-10 border-b border-[#2A2A2A] bg-[#0A0A0A]/80 backdrop-blur-sm flex items-center px-4 z-10 w-full rounded-tl-lg">
                     <div className="flex items-center gap-2">
-                        <span className="text-[#ED1C24] text-xs">🟥</span>
-                        <span className="text-xs font-mono text-[#ED1C24]">src/kernel.hip</span>
+                        <span className="text-[#ED1C24] text-xs font-bold">🟥 ROCm</span>
+                        <span className="text-xs font-mono text-[#ED1C24] font-semibold">src/kernel.hip</span>
                     </div>
                 </div>
                 <div className="flex-1 w-full relative z-0 mix-blend-screen drop-shadow-md">

@@ -32,9 +32,9 @@ export function Landing({ onSelect, onRandom, onManual }: LandingProps) {
 
             {/* Center headlines */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut", delay: 0.3 }}
                 className="relative z-10 text-center mb-16"
             >
                 <h2 className="text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-4">
@@ -54,15 +54,15 @@ export function Landing({ onSelect, onRandom, onManual }: LandingProps) {
                             key={ex.id}
                             initial={{ opacity: 0, y: 30 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 + i * 0.1 }}
+                            transition={{ delay: 0.7 + i * 0.15 }}
                             onClick={() => onSelect(ex, i)}
-                            className={`relative text-left p-8 rounded-2xl border bg-[#141414]/90 backdrop-blur-sm transition-all duration-300 group
+                            className={`relative text-left p-10 rounded-2xl border bg-[#141414]/90 backdrop-blur-sm transition-all duration-300 group
                                 ${isPulsing
-                                    ? 'border-[#ED1C24] shadow-[0_0_40px_rgba(237,28,36,0.3)] bg-[#1A1A1A] scale-[1.02]'
-                                    : 'border-[#2A2A2A] hover:border-[#ED1C24]/50 hover:bg-[#1A1A1A] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(237,28,36,0.1)]'
+                                    ? 'border-l-4 border-l-[#ED1C24] border-t-[#ED1C24] border-r-[#ED1C24] border-b-[#ED1C24] shadow-[0_0_40px_rgba(237,28,36,0.3)] bg-[#1A1A1A] scale-[1.02]'
+                                    : 'border-l-4 border-[#2A2A2A] hover:border-l-[#ED1C24] hover:bg-[#1A1A1A] hover:scale-[1.03] hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(237,28,36,0.15)] shadow-lg'
                                 }`}
                         >
-                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-[#ED1C24] transition-colors">{ex.title}</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-[#ED1C24] transition-colors">{ex.title}</h3>
                             <p className="text-sm font-mono text-[#606060] line-clamp-2 max-w-[90%] opacity-80">{ex.code.split('\n')[0]}</p>
                             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#ED1C24]/0 to-[#ED1C24]/0 group-hover:from-[#ED1C24]/5 group-hover:to-transparent pointer-events-none transition-all duration-500" />
                         </motion.button>
