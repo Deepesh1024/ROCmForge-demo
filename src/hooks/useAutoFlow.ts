@@ -41,6 +41,13 @@ export function useAutoFlow() {
 
         try {
             parseRes = await api.parseCuda(code);
+
+            // Reject non-CUDA input early — don't fall through to generate
+            const primitive = parseRes?.data?.classification?.primitive;
+            if (primitive === "unknown") {
+                throw new Error("Input not recognized as valid CUDA code. Please provide a CUDA kernel.");
+            }
+
             try {
                 const genRes = await api.generateHip(code, parseRes);
                 generatedCode = genRes.hip_code;
